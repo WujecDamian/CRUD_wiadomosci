@@ -1,0 +1,25 @@
+{
+  "name": "crud_wiadomosci",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently -n client,server -c cyan,green \"npm run dev --prefix client\" \"npm run dev --prefix server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WujecDamian/CRUD_wiadomosci.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/WujecDamian/CRUD_wiadomosci/issues"
+  },
+  "homepage": "https://github.com/WujecDamian/CRUD_wiadomosci#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
+}
