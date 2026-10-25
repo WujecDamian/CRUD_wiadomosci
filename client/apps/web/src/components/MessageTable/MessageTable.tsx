@@ -87,7 +87,7 @@ export const MessageTable = ({
               <TableRow key={message.id}>
                 <TableCell className="pl-4">
                   <span className="inline-flex rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
-                    {String(rowNumber).padStart(2, "0")}
+                    {message.id}
                   </span>
                 </TableCell>
                 <TableCell>{message.content}</TableCell>
@@ -99,7 +99,7 @@ export const MessageTable = ({
                       }
                     >
                       <Ellipsis />
-                      <span className="sr-only">Akcje</span>
+                      <span className="sr-only">Akcje</span> {/* dla screen readerów */}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
