@@ -6,7 +6,7 @@ UI:
 ShadCN UI
 
 
-1. Przygotowanie routerow i controllerow (backend) - bez prismy tylko raw SQL [  ]
+1. Przygotowanie routerow i controllerow (backend)  [ Y ]
 
 2. Dodawanie wiadomosci [  ]
 
