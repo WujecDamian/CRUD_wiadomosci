@@ -1,0 +1,21 @@
+Stack main:
+React, Nodejs, PostgreSQL
+API:
+RTK Query (React Redux)
+UI:
+ShadCN UI
+
+
+1. Przygotowanie routerow i controllerow (backend)  [ Y ]
+
+2. Dodawanie wiadomosci [ Y ]
+
+3. Wyswietlanie wiadomosci [ Y ]
+
+4. Akcje wiadomosci (natywny popup z html) | edytuj, usuń [ Y ]
+
+5. Stylizacja przez ShadCN [ Y ]
+
+6. Walidacja danych frontend i backend [ Y ]
+
+7. konteneryzacja [  ]
