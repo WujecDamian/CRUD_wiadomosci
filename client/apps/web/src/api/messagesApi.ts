@@ -3,7 +3,7 @@ import type { Message } from "../types/message"
 
 export const messagesApi = createApi({
   reducerPath: "messagesApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL ?? "/api" }),
   tagTypes: ["Messages"],
   endpoints: (builder) => ({
     getMessages: builder.query<Message[], void>({
