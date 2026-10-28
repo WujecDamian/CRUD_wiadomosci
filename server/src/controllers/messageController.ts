@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
 import { prisma } from "../db.js";
+import { isValidId, validateContent } from "../validation.js";
 
 export const getMessages = async (_request: Request, response: Response) => {
   try {
     const messages = await prisma.message.findMany({
-      orderBy: { id: "asc" },
+      orderBy: { createdAt: "desc" },
     });
 
     response.json(messages);
@@ -15,12 +16,14 @@ export const getMessages = async (_request: Request, response: Response) => {
 };
 
 export const createMessage = async (request: Request, response: Response) => {
-  const { content } = request.body;
+  const result = validateContent(request.body?.content);
 
-  if (!content) {
-    response.status(400).json({ message: "Content is required" });
+  if (result.error !== undefined) {
+    response.status(400).json({ message: result.error });
     return;
   }
+
+  const { content } = result;
 
   try {
     const message = await prisma.message.create({
@@ -36,17 +39,20 @@ export const createMessage = async (request: Request, response: Response) => {
 
 export const updateMessage = async (request: Request, response: Response) => {
   const id = request.params.id;
-  const { content } = request.body;
 
-  if (typeof id !== "string") {
-    response.status(400).json({ message: "Id must be a string" });
+  if (!isValidId(id)) {
+    response.status(400).json({ message: "Id must be a valid UUID" });
     return;
   }
 
-  if (!content) {
-    response.status(400).json({ message: "Content is required" });
+  const result = validateContent(request.body?.content);
+
+  if (result.error !== undefined) {
+    response.status(400).json({ message: result.error });
     return;
   }
+
+  const { content } = result;
 
   try {
     const existingMessage = await prisma.message.findUnique({
@@ -73,8 +79,8 @@ export const updateMessage = async (request: Request, response: Response) => {
 export const deleteMessage = async (request: Request, response: Response) => {
   const id = request.params.id;
 
-  if (typeof id !== "string") {
-    response.status(400).json({ message: "Id must be a string" });
+  if (!isValidId(id)) {
+    response.status(400).json({ message: "Id must be a valid UUID" });
     return;
   }
 
