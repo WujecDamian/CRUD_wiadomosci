@@ -5,6 +5,8 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useCreateMessageMutation } from "../../api/messagesApi"
+import { MAX_MESSAGE_LENGTH } from "../../lib/constants"
+import { getErrorMessage } from "../../lib/getErrorMessage"
 
 export const MessageForm = () => {
   const [content, setContent] = useState("")
@@ -26,7 +28,7 @@ export const MessageForm = () => {
       setContent("")
       setError("")
     } catch (requestError) {
-      console.error(requestError)
+      setError(getErrorMessage(requestError))
     }
   }
 
@@ -41,6 +43,7 @@ export const MessageForm = () => {
           id="new-message"
           value={content}
           placeholder="Wpisz treść wiadomości..."
+          maxLength={MAX_MESSAGE_LENGTH}
           aria-invalid={error ? true : undefined}
           className="h-10"
           onChange={(event) => {
@@ -60,7 +63,12 @@ export const MessageForm = () => {
           Wyślij
         </Button>
       </div>
-      {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+      <div className="mt-2 flex justify-between gap-4 text-sm">
+        <p className="text-destructive">{error}</p>
+        <p className="shrink-0 text-muted-foreground">
+          {content.length}/{MAX_MESSAGE_LENGTH}
+        </p>
+      </div>
     </form>
   )
 }
