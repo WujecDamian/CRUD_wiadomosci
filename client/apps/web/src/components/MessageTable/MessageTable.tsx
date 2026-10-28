@@ -15,32 +15,26 @@ import {
   TableHeader,
   TableRow,
 } from "@workspace/ui/components/table"
-import { useDeleteMessageMutation } from "../../api/messagesApi"
 import type { Message } from "../../types/message"
+import { DeleteMessageDialog } from "../DeleteMessageDialog/DeleteMessageDialog"
 import { EditMessageDialog } from "../EditMessageDialog/EditMessageDialog"
 
 type MessageTableProps = {
   messages: Message[]
   isLoading: boolean
   isError: boolean
+  onRetry: () => void
 }
 
 export const MessageTable = ({
   messages,
   isLoading,
   isError,
+  onRetry,
 }: MessageTableProps) => {
   const [messageToEdit, setMessageToEdit] = useState<Message | null>(null)
   const [displayNumber, setDisplayNumber] = useState<number | null>(null)
-  const [deleteMessage] = useDeleteMessageMutation()
-
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteMessage(id).unwrap()
-    } catch (requestError) {
-      console.error(requestError)
-    }
-  }
+  const [messageToDelete, setMessageToDelete] = useState<Message | null>(null)
 
   return (
     <>
@@ -53,7 +47,7 @@ export const MessageTable = ({
             <TableHead className="text-xs tracking-wide text-muted-foreground uppercase">
               Wiadomość
             </TableHead>
-            <TableHead className="pr-4 text-right text-xs tracking-wide text-muted-foreground uppercase">
+            <TableHead className="w-16 pr-4 text-right text-xs tracking-wide text-muted-foreground uppercase">
               Akcje
             </TableHead>
           </TableRow>
@@ -70,6 +64,14 @@ export const MessageTable = ({
             <TableRow>
               <TableCell colSpan={3} className="py-8 text-center text-destructive">
                 Nie udało się wczytać wiadomości.
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-3"
+                  onClick={onRetry}
+                >
+                  Spróbuj ponownie
+                </Button>
               </TableCell>
             </TableRow>
           )}
@@ -90,8 +92,10 @@ export const MessageTable = ({
                     {message.id}
                   </span>
                 </TableCell>
-                <TableCell>{message.content}</TableCell>
-                <TableCell className="pr-4 text-right">
+                <TableCell className="max-w-0 break-words whitespace-normal">
+                  {message.content}
+                </TableCell>
+                <TableCell className="w-16 pr-4 text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       render={
@@ -114,7 +118,7 @@ export const MessageTable = ({
                       <DropdownMenuItem
                         variant="destructive"
                         onClick={() => {
-                          handleDelete(message.id)
+                          setMessageToDelete(message)
                         }}
                       >
                         <Trash2 />
@@ -128,6 +132,10 @@ export const MessageTable = ({
           })}
         </TableBody>
       </Table>
+      <DeleteMessageDialog
+        message={messageToDelete}
+        onClose={() => setMessageToDelete(null)}
+      />
       <EditMessageDialog
         message={messageToEdit}
         displayNumber={displayNumber}
