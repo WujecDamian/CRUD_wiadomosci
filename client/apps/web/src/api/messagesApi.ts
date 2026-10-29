@@ -1,9 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 import type { Message } from "../types/message"
 
+const invalidateOnNotFound = (_result: unknown, error: unknown) =>
+  (error as { status?: unknown } | undefined)?.status === 404
+    ? ["Messages" as const]
+    : []
+
 export const messagesApi = createApi({
   reducerPath: "messagesApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL ?? "/api" }),
   tagTypes: ["Messages"],
   endpoints: (builder) => ({
     getMessages: builder.query<Message[], void>({
@@ -24,14 +29,16 @@ export const messagesApi = createApi({
         method: "PATCH",
         body: { content },
       }),
-      invalidatesTags: ["Messages"],
+      invalidatesTags: (result, error) =>
+        error ? invalidateOnNotFound(result, error) : ["Messages"],
     }),
     deleteMessage: builder.mutation<void, string>({
       query: (id) => ({
         url: `/messages/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Messages"],
+      invalidatesTags: (result, error) =>
+        error ? invalidateOnNotFound(result, error) : ["Messages"],
     }),
   }),
 })

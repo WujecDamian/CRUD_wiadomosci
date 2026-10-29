@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import type { FormEvent } from "react"
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -11,6 +11,8 @@ import {
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useUpdateMessageMutation } from "../../api/messagesApi"
+import { MAX_MESSAGE_LENGTH } from "../../lib/constants"
+import { getErrorMessage } from "../../lib/getErrorMessage"
 import type { Message } from "../../types/message"
 
 type EditMessageDialogProps = {
@@ -28,10 +30,13 @@ export const EditMessageDialog = ({
   const [error, setError] = useState("")
   const [updateMessage, { isLoading }] = useUpdateMessageMutation()
 
-  useEffect(() => {
+  const [previousMessage, setPreviousMessage] = useState(message)
+
+  if (message !== previousMessage) {
+    setPreviousMessage(message)
     setContent(message?.content ?? "")
     setError("")
-  }, [message])
+  }
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -47,11 +52,16 @@ export const EditMessageDialog = ({
       return
     }
 
+    if (trimmedContent === message.content) {
+      onClose()
+      return
+    }
+
     try {
       await updateMessage({ id: message.id, content: trimmedContent }).unwrap()
       onClose()
     } catch (requestError) {
-      console.error(requestError)
+      setError(getErrorMessage(requestError))
     }
   }
 
@@ -81,6 +91,7 @@ export const EditMessageDialog = ({
           <Input
             id="edit-message"
             value={content}
+            maxLength={MAX_MESSAGE_LENGTH}
             aria-invalid={error ? true : undefined}
             className="mt-2 h-10"
             onChange={(event) => {
@@ -90,7 +101,12 @@ export const EditMessageDialog = ({
               }
             }}
           />
-          {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+          <div className="mt-2 flex justify-between gap-4 text-sm">
+            <p className="text-destructive">{error}</p>
+            <p className="shrink-0 text-muted-foreground">
+              {content.length}/{MAX_MESSAGE_LENGTH}
+            </p>
+          </div>
           <div className="mt-6 flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Anuluj

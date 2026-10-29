@@ -1,9 +1,10 @@
 import { useGetMessagesQuery } from "./api/messagesApi"
 import { MessageForm } from "./components/MessageForm/MessageForm"
+import { CornerPanels } from "./components/CornerPanels/CornerPanels"
 import { MessageTable } from "./components/MessageTable/MessageTable"
 
 export const App = () => {
-  const { data, isLoading, isError } = useGetMessagesQuery()
+  const { data, isLoading, isError, refetch } = useGetMessagesQuery()
   const messages = data ?? []
 
   return (
@@ -13,9 +14,11 @@ export const App = () => {
           messages={messages}
           isLoading={isLoading}
           isError={isError}
+          onRetry={refetch}
         />
         <MessageForm />
       </div>
+      <CornerPanels />
     </main>
   )
 }

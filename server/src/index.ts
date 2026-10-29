@@ -1,12 +1,6 @@
-import express from "express";
-import { messageRoutes } from "./routes/messageRoutes.js";
+import { app } from "./app.js";
 
-const app = express();
-const port = 3001;
-
-app.use(express.json());
-
-app.use("/api/messages", messageRoutes);
+const port = Number(process.env.PORT) || 3001;
 
 app.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
