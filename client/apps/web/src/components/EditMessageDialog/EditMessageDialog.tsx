@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import type { FormEvent } from "react"
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -30,10 +30,13 @@ export const EditMessageDialog = ({
   const [error, setError] = useState("")
   const [updateMessage, { isLoading }] = useUpdateMessageMutation()
 
-  useEffect(() => {
+  const [previousMessage, setPreviousMessage] = useState(message)
+
+  if (message !== previousMessage) {
+    setPreviousMessage(message)
     setContent(message?.content ?? "")
     setError("")
-  }, [message])
+  }
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
